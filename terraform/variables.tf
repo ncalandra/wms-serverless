@@ -1,4 +1,4 @@
-# General Variables
+# AWS Credentials
 variable "access_key" {
   type        = string
   description = "AWS Access Key"
@@ -21,4 +21,10 @@ variable "name" {
 variable "project" {
   type        = "string"
   description = "A 'project' tag is added to all resources to track cost"
+}
+
+# Main S3 Bucket name
+variable "s3_bucket_name" {
+  type        = "string"
+  description = "Name for the S3 bucket where data is stored.  S3 bucket names must be unique"
 }
