@@ -11,10 +11,13 @@ terraform {
 }
 
 # Modules
-module "lambda" {
-  source  = "./lambda"
-  name    = "${var.name}"
-  project = "${var.project}"
+module "ABI_L2_CMIPF" {
+  source        = "./goes16_datasource"
+  name          = "${var.name}"
+  project       = "${var.project}"
+  source_bucket = "noaa-goes16"
+  dest_bucket   = "${var.s3_bucket_name}"
+  parameter     = "CMI"
 }
 
 module "s3" {
