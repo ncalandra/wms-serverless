@@ -11,13 +11,12 @@ terraform {
 }
 
 # Modules
-module "ABI_L2_CMIPF" {
+module "geos16" {
   source        = "./goes16_datasource"
   name          = "${var.name}"
   project       = "${var.project}"
   source_bucket = "noaa-goes16"
   dest_bucket   = "${var.s3_bucket_name}"
-  parameter     = "CMI"
 }
 
 module "s3" {

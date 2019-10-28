@@ -6,7 +6,6 @@ fname = "ABI-L2-CMIPF/2019/299/20/OR_ABI-L2-CMIPF-M6C16_G16_s20192992030373_e201
 
 SOURCE_BUCKET = os.environ['source_bucket']
 DEST_BUCKET = os.environ['dest_bucket']
-PARAMETER = os.environ['parameter']
 
 def handler(event, context):
 
@@ -19,7 +18,7 @@ def handler(event, context):
     # Open dataset
     gdal_raster = gdal.Translate(
         '',
-        f'NETCDF:{input_file}:{PARAMETER}',
+        f'NETCDF:{input_file}:CMI',
         format='MEM',
         bandList=[1]
     )

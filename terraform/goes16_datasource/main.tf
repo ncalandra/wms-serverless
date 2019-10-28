@@ -9,15 +9,18 @@ variable "project" {}
 # Parameters
 variable "source_bucket" {}
 variable "dest_bucket" {}
-variable "parameter" {}
 
 # Lambda functions
+module "filter_subscription" {
+  source  = "./filter_subscription"
+  name    = "${var.name}_filter_subscription"
+  project = "${var.project}"
+}
+
 module "process_netcdf" {
   source        = "./process_netcdf"
   name          = "${var.name}_process_netcdf"
   project       = "${var.project}"
-  role          = "${aws_iam_role.lambda}"
   source_bucket = "${var.source_bucket}"
   dest_bucket   = "${var.dest_bucket}"
-  parameter     = "${var.parameter}"
 }

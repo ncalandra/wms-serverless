@@ -1,8 +1,8 @@
 /*
- *  IAM Roles used by lambda
+ *  IAM Role used by this lambda function
  */
 
-
+# Role
 resource "aws_iam_role" "lambda" {
   name = "${var.name}_lambda"
   path = "/"
@@ -14,6 +14,7 @@ resource "aws_iam_role" "lambda" {
   }
 }
 
+# Service using role
 data "aws_iam_policy_document" "lambda" {
   statement {
     effect  = "Allow"
@@ -25,12 +26,14 @@ data "aws_iam_policy_document" "lambda" {
   }
 }
 
+# In-line policy attachment
 resource "aws_iam_role_policy" "s3" {
   name = "${var.name}_s3"
   role = "${aws_iam_role.lambda.id}"
   policy = "${data.aws_iam_policy_document.s3.json}"
 }
 
+# In-line policy definition
 data "aws_iam_policy_document" "s3" {
   statement {
     sid = "S3ListBucket"
@@ -58,4 +61,10 @@ data "aws_iam_policy_document" "s3" {
     ]
     resources = ["arn:aws:s3:::${var.dest_bucket}/*"]
   }
+}
+
+# AWS CloudWatch policy attachment
+resource "aws_iam_role_policy_attachment" "cloudwatch" {
+  role       = "${aws_iam_role.lambda.id}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }

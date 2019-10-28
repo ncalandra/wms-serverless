@@ -7,35 +7,23 @@ variable "name" {}
 variable "project" {}
 
 # Parameters
-variable "source_bucket" {}
-variable "dest_bucket" {}
+
 
 # Archive Source Code
-data "archive_file" "process_netcdf" {
+data "archive_file" "filter_subscription" {
   type        = "zip"
   source_dir  = "${path.module}/src/"
   output_path = "${path.module}/src.zip"
 }
 
-resource "aws_lambda_function" "source" {
+resource "aws_lambda_function" "filter_subscription" {
   filename         = "${path.module}/src.zip"
-  source_code_hash = "${data.archive_file.process_netcdf.output_base64sha256}"
-  layers           = [
-    "arn:aws:lambda:us-east-1:552188055668:layer:geolambda-python:3",
-    "arn:aws:lambda:us-east-1:552188055668:layer:geolambda:4"
-  ]
+  source_code_hash = "${data.archive_file.filter_subscription.output_base64sha256}"
   function_name    = "${var.name}"
   role             = "${aws_iam_role.lambda.arn}"
   handler          = "main.handler"
   runtime          = "python3.7"
   timeout          = 120
-
-  environment {
-    variables = {
-      source_bucket = "${var.source_bucket}"
-      dest_bucket   = "${var.dest_bucket}"
-    }
-  }
 
   tags = {
     Name    = "${var.name}"
@@ -43,7 +31,16 @@ resource "aws_lambda_function" "source" {
   }
 }
 
+# Allow SNS to invoke this lambda function
+resource "aws_lambda_permission" "allow_SNS" {
+  statement_id  = "AllowExecutionFromSNS"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.filter_subscription.function_name}"
+  principal     = "sns.amazonaws.com"
+  source_arn    = "arn:aws:sns:us-east-1:123901341784:NewGOES16Object"
+}
+
 # Return Lambda ARN
 output "lambda_arn" {
-  value = "${aws_lambda_function.source.arn}"
+  value = "${aws_lambda_function.filter_subscription.arn}"
 }
