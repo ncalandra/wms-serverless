@@ -15,6 +15,7 @@ module "filter_subscription" {
   source  = "./filter_subscription"
   name    = "${var.name}_filter_subscription"
   project = "${var.project}"
+  processing_function = "${module.process_netcdf.lambda_arn}"
 }
 
 module "process_netcdf" {

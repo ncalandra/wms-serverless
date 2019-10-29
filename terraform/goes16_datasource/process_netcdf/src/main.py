@@ -2,8 +2,6 @@ import os
 import boto3
 from osgeo import gdal, osr
 
-fname = "ABI-L2-CMIPF/2019/299/20/OR_ABI-L2-CMIPF-M6C16_G16_s20192992030373_e20192992040092_c20192992040171.nc"
-
 SOURCE_BUCKET = os.environ['source_bucket']
 DEST_BUCKET = os.environ['dest_bucket']
 
@@ -13,7 +11,7 @@ def handler(event, context):
     output_file = os.path.join('/tmp', 'file.tif')
 
     client = boto3.client('s3')
-    client.download_file(SOURCE_BUCKET, fname, input_file)
+    client.download_file(SOURCE_BUCKET, event['key'], input_file)
 
     # Open dataset
     gdal_raster = gdal.Translate(
@@ -42,7 +40,7 @@ def handler(event, context):
         gdal_raster,
         format='GTiff'
     )
-    print(os.listdir('/tmp'))
 
     # Upload to S3
-    client.upload_file(output_file, DEST_BUCKET, 'ABI-L2-CMIPF/test.tif')
+    key = f'{event['key'].split('.')[0]}.tif'
+    client.upload_file(output_file, DEST_BUCKET, key)

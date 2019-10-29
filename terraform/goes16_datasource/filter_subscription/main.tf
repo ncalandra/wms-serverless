@@ -7,7 +7,7 @@ variable "name" {}
 variable "project" {}
 
 # Parameters
-
+variable "processing_function" {}
 
 # Archive Source Code
 data "archive_file" "filter_subscription" {
@@ -24,6 +24,12 @@ resource "aws_lambda_function" "filter_subscription" {
   handler          = "main.handler"
   runtime          = "python3.7"
   timeout          = 120
+
+  environment {
+    variables = {
+      processing_function = "${var.processing_function}"
+    }
+  }
 
   tags = {
     Name    = "${var.name}"
