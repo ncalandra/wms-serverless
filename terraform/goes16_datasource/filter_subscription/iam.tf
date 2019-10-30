@@ -27,21 +27,21 @@ data "aws_iam_policy_document" "lambda" {
 }
 
 # In-line policy attachment
-resource "aws_iam_role_policy" "stepfunctions" {
-  name = "${var.name}_s3"
+resource "aws_iam_role_policy" "lambda" {
+  name = "${var.name}_lambda"
   role = "${aws_iam_role.lambda.id}"
-  policy = "${data.aws_iam_policy_document.stepfunctions.json}"
+  policy = "${data.aws_iam_policy_document.lambda_invoke.json}"
 }
 
 # In-line policy definition
-data "aws_iam_policy_document" "stepfunctions" {
+data "aws_iam_policy_document" "lambda_invoke" {
   statement {
-    sid = "StartStateMachine"
+    sid = "InvokeLambda"
     effect = "Allow"
     actions = [
-      "states:StartExecution"
+      "lambda:InvokeFunction"
     ]
-    resources = ["arn:aws:states:*:*:stateMachine:*"]
+    resources = ["${var.processing_function}"]
   }
 }
 

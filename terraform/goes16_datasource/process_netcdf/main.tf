@@ -17,7 +17,7 @@ data "archive_file" "process_netcdf" {
   output_path = "${path.module}/src.zip"
 }
 
-resource "aws_lambda_function" "source" {
+resource "aws_lambda_function" "process_netcdf" {
   filename         = "${path.module}/src.zip"
   source_code_hash = "${data.archive_file.process_netcdf.output_base64sha256}"
   layers           = [
@@ -28,7 +28,8 @@ resource "aws_lambda_function" "source" {
   role             = "${aws_iam_role.lambda.arn}"
   handler          = "main.handler"
   runtime          = "python3.7"
-  timeout          = 120
+  timeout          = 300
+  memory_size      = 512
 
   environment {
     variables = {
@@ -45,5 +46,5 @@ resource "aws_lambda_function" "source" {
 
 # Return Lambda ARN
 output "lambda_arn" {
-  value = "${aws_lambda_function.source.arn}"
+  value = "${aws_lambda_function.process_netcdf.arn}"
 }

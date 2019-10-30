@@ -1,5 +1,5 @@
 /*
- *  Lambda function that converts a NetCDF file to a COG
+ *  Lambda function filters an SNS subscription
  */
 
 # Name and Project Tags
