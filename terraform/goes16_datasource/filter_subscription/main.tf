@@ -20,6 +20,7 @@ resource "aws_lambda_function" "filter_subscription" {
   filename         = "${path.module}/src.zip"
   source_code_hash = "${data.archive_file.filter_subscription.output_base64sha256}"
   function_name    = "${var.name}"
+  description      = "Filter the goes16 sns topic"
   role             = "${aws_iam_role.lambda.arn}"
   handler          = "main.handler"
   runtime          = "python3.7"

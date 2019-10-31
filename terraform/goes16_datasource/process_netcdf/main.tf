@@ -25,6 +25,7 @@ resource "aws_lambda_function" "process_netcdf" {
     "arn:aws:lambda:us-east-1:552188055668:layer:geolambda:4"
   ]
   function_name    = "${var.name}"
+  description      = "Convert a NetCDF file to a COG"
   role             = "${aws_iam_role.lambda.arn}"
   handler          = "main.handler"
   runtime          = "python3.7"
