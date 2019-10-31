@@ -27,7 +27,9 @@ def handler(event, context):
         '',
         f'NETCDF:{input_file}:CMI',
         format='MEM',
-        bandList=[1]
+        bandList=[1],
+        outputType=gdal.GDT_Float32,
+        unscale=True  # GDAL warp cannot handle scaled values
     )
 
     # Warp to EPSG:3857
