@@ -9,52 +9,51 @@ from osgeo import gdal, osr
 SOURCE_BUCKET = os.environ['source_bucket']
 DEST_BUCKET = os.environ['dest_bucket']
 
+# Set environment variables for GDAL and Proj
+os.environ['PROJ_LIB'] = '/opt/share/proj'
+os.environ['GDAL_DATA'] = '/opt/share/gdal'
+
 def handler(event, context):
 
     input_file = os.path.join('/tmp', 'file.nc')
     output_file = os.path.join('/tmp', 'file.tif')
 
+    # Download file
     client = boto3.client('s3')
     client.download_file(SOURCE_BUCKET, event['key'], input_file)
 
-    gdal.Translate(
-        output_file,
+    # Convert to GeoTIFF
+    dataset = gdal.Translate(
+        '',
         f'NETCDF:{input_file}:CMI',
-        format='GTiff',
-        bandList=[1],
-        #creationOptions=['TILED=YES', 'COPY_SRC_OVERVIEWS=YES', 'COMPRESS=DEFLATE']
+        format='MEM',
+        bandList=[1]
     )
+
+    # Warp to EPSG:3857
+    dataset = gdal.Warp(
+        '',
+        dataset,
+        format='MEM',
+        dstSRS='EPSG:3857',
+        workingType=gdal.GDT_Float32,
+        outputType=gdal.GDT_Float32
+    )
+
+    # Apply compression and tiling
+    dataset = gdal.Translate(
+        output_file,
+        dataset,
+        format='GTiff',
+        creationOptions=['TILED=YES', 'COMPRESS=DEFLATE']
+    )
+
+    # Add overviews
+    dataset.BuildOverviews("NEAREST", [2, 4, 8, 16, 32, 64])
+
+    # Close dataset
+    dataset = None
 
     # Upload to S3
     key = f'{event["key"].split(".")[0]}.tif'
     client.upload_file(output_file, DEST_BUCKET, key)
-
-
-# def process_in_mem():
-#     # Open dataset
-#     gdal_raster = gdal.Translate(
-#         '',
-#         f'NETCDF:{input_file}:CMI',
-#         format='MEM',
-#         bandList=[1]
-#     )
-#
-#     # Convert to EPSG:3857
-#     srs = osr.SpatialReference(wkt=gdal_raster.GetProjection())
-#     srs_string = srs.GetAttrValue('AUTHORITY', 0) + ':' + srs.GetAttrValue('AUTHORITY', 1)
-#     print(f'Source SRS: {srs_string}')
-#
-#     gdal_raster = gdal.Warp(
-#         '',
-#         gdal_raster,
-#         format='MEM',
-#         srcSRS=srs_string,
-#         dstSRS='EPSG:3857'
-#     )
-#
-#     # Write to disk
-#     gdal_raster = gdal.Translate(
-#         output_file,
-#         gdal_raster,
-#         format='GTiff'
-#     )
