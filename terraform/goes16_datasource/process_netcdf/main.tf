@@ -29,7 +29,7 @@ resource "aws_lambda_function" "process_netcdf" {
   handler          = "main.handler"
   runtime          = "python3.7"
   timeout          = 300
-  memory_size      = 512
+  memory_size      = 448
 
   environment {
     variables = {
