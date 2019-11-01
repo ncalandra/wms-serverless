@@ -25,3 +25,11 @@ module "s3" {
   project        = "${var.project}"
   s3_bucket_name = "${var.s3_bucket_name}"
 }
+
+module "tile_service" {
+  source        = "./tile_service"
+  name          = "${var.name}"
+  project       = "${var.project}"
+  source_bucket = "${var.s3_bucket_name}"
+  region        = "${var.aws_region}"
+}

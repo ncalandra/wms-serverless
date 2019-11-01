@@ -1,0 +1,129 @@
+openapi: 3.0.2
+info:
+  title: COG tiler
+  description: Tiles COGS
+  version: 0.0.0
+servers:
+  - url: 'localhost'
+    description: 'tester'
+paths:
+  /wms:
+    get:
+      summary: Web Map Service
+      description: OGC compliant WMS feed
+      tags:
+        - Tile
+      parameters:
+        - name: version
+          description: WMS Version (1.3.0)
+          in: query
+          required: true
+          schema:
+            type: string
+            example: 1.3.0
+        - name: request
+          description: WMS request type
+          in: query
+          required: true
+          schema:
+            type: string
+            example: GetMap
+        - name: layers
+          description: layer name
+          in: query
+          required: true
+          schema:
+            type: string
+            example: layername
+        - name: styles
+          description: style name
+          in: query
+          required: true
+          schema:
+            type: string
+            example: style
+        - name: crs
+          description: Coordinate Reference System (CRS)
+          in: query
+          required: true
+          schema:
+            type: string
+            example: epsg:4326
+        - name: bbox
+          description: Boundingbox corners (minx,miny,maxx,maxy)
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: number
+            example: [0,0,0,0]
+        - name: width
+          description: Output image width
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 256
+        - name: height
+          description: Output image height
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 256
+        - name: format
+          description: Output image format
+          in: query
+          required: true
+          schema:
+            type: string
+            example: image/png
+        - name: transparent
+          description: Background map transparency
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+            example: false
+        - name: bgcolor
+          description: Background color
+          in: query
+          required: false
+          schema:
+            type: string
+            default: "0xFFFFFF"
+            example: "0xFFFFFF"
+        - name: exceptions
+          description: exception format
+          in: query
+          required: false
+          schema:
+            type: string
+            default: json
+            example: json
+        - name: time
+          description: Time value of the layer
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "2019-11-01T01:15:07Z"
+        - name: elevation
+          description: Elevation value of the layer
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "0"
+      responses:
+        200:
+          description: sucess
+      x-amazon-apigateway-integration:
+        type: aws
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${cog_renderer}/invocations
+        httpMethod: GET
+        responses:
+          default:
+            statusCode: 400
