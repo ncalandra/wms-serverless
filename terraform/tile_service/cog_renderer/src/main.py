@@ -23,7 +23,7 @@ def handler(event, context):
     # Convert to GeoTIFF
     gdal.Translate(
         os.path.join('/tmp', 'file.png'),
-        f'/vsis3_streaming/{SOURCE_BUCKET}/{layername}',
+        f'/vsis3/{SOURCE_BUCKET}/{layername}',
         outputType=gdal.GDT_Byte,
         width=width,
         height=height,
