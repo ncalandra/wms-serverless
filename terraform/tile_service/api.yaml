@@ -1,11 +1,24 @@
 openapi: 3.0.2
 info:
-  title: COG tiler
+  title: ${name}
   description: Tiles COGS
   version: 0.0.0
 servers:
   - url: 'localhost'
     description: 'tester'
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true
+    validateRequestHeaders: true
+  params-only:
+    validateRequestBody: false
+    validateRequestParameters: true
+    validateRequestHeaders: true
+x-amazon-apigateway-binary-media-types:
+  - image/png
+  - image/jpeg
+  - */*
 paths:
   /wms:
     get:
@@ -13,43 +26,44 @@ paths:
       description: OGC compliant WMS feed
       tags:
         - Tile
+      x-amazon-apigateway-request-validator: params-only
       parameters:
-        - name: version
+        - name: VERSION
           description: WMS Version (1.3.0)
           in: query
           required: true
           schema:
             type: string
             example: 1.3.0
-        - name: request
+        - name: REQUEST
           description: WMS request type
           in: query
           required: true
           schema:
             type: string
             example: GetMap
-        - name: layers
+        - name: LAYERS
           description: layer name
           in: query
           required: true
           schema:
             type: string
             example: layername
-        - name: styles
+        - name: STYLES
           description: style name
           in: query
           required: true
           schema:
             type: string
             example: style
-        - name: crs
+        - name: CRS
           description: Coordinate Reference System (CRS)
           in: query
           required: true
           schema:
             type: string
             example: epsg:4326
-        - name: bbox
+        - name: BBOX
           description: Boundingbox corners (minx,miny,maxx,maxy)
           in: query
           required: true
@@ -58,28 +72,28 @@ paths:
             items:
               type: number
             example: [0,0,0,0]
-        - name: width
+        - name: WIDTH
           description: Output image width
           in: query
           required: true
           schema:
             type: integer
             example: 256
-        - name: height
+        - name: HEIGHT
           description: Output image height
           in: query
           required: true
           schema:
             type: integer
             example: 256
-        - name: format
+        - name: FORMAT
           description: Output image format
           in: query
           required: true
           schema:
             type: string
             example: image/png
-        - name: transparent
+        - name: TRANSPARENT
           description: Background map transparency
           in: query
           required: false
@@ -87,7 +101,7 @@ paths:
             type: boolean
             default: false
             example: false
-        - name: bgcolor
+        - name: BGCOLOR
           description: Background color
           in: query
           required: false
@@ -95,7 +109,7 @@ paths:
             type: string
             default: "0xFFFFFF"
             example: "0xFFFFFF"
-        - name: exceptions
+        - name: EXCEPTIONS
           description: exception format
           in: query
           required: false
@@ -103,14 +117,14 @@ paths:
             type: string
             default: json
             example: json
-        - name: time
+        - name: TIME
           description: Time value of the layer
           in: query
           required: false
           schema:
             type: string
             example: "2019-11-01T01:15:07Z"
-        - name: elevation
+        - name: ELEVATION
           description: Elevation value of the layer
           in: query
           required: false
@@ -119,11 +133,20 @@ paths:
             example: "0"
       responses:
         200:
-          description: sucess
+          description: OK
+          content:
+            image/png:
+              $ref: '#/components/schemas/binary'
       x-amazon-apigateway-integration:
-        type: aws
+        type: aws_proxy
         uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${cog_renderer}/invocations
-        httpMethod: GET
+        httpMethod: POST
+        credentials: ${credentials}
         responses:
           default:
-            statusCode: 400
+            statusCode: 200
+components:
+  schemas:
+    binary:
+      type: string
+      format: binary

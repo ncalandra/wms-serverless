@@ -30,7 +30,6 @@ resource "aws_s3_bucket" "data" {
   # Expire items older than 1 day
   lifecycle_rule {
     id      = "expire"
-    prefix = "/"
     enabled = true
 
     expiration {

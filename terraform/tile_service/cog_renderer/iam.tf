@@ -9,7 +9,7 @@ resource "aws_iam_role" "lambda" {
   assume_role_policy = "${data.aws_iam_policy_document.lambda.json}"
 
   tags = {
-    Name    = "${var.name}"
+    Name    = "${var.name}_lambda"
     Project = "${var.project}"
   }
 }
