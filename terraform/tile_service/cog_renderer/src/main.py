@@ -4,7 +4,6 @@ import base64
 import os
 
 # External Imports
-import boto3
 from osgeo import gdal, osr
 
 SOURCE_BUCKET = os.environ['source_bucket']

@@ -18,7 +18,7 @@ x-amazon-apigateway-request-validators:
 x-amazon-apigateway-binary-media-types:
   - image/png
   - image/jpeg
-  - */*
+  - image/webp
 paths:
   /wms:
     get:
@@ -142,6 +142,8 @@ paths:
         uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${cog_renderer}/invocations
         httpMethod: POST
         credentials: ${credentials}
+        requestParameters:
+          integration.request.header.Accept: method.request.querystring.FORMAT
         responses:
           default:
             statusCode: 200

@@ -16,3 +16,12 @@ data "template_file" "openapi" {
     credentials  = "${aws_iam_role.api_gw.arn}"
   }
 }
+
+# API Deployment
+resource "aws_api_gateway_deployment" "demo" {
+  rest_api_id       = "${aws_api_gateway_rest_api.tile.id}"
+  stage_name        = "demo"
+
+  # Set the description to a hash of the OpenAPI file to force updates on changes
+  stage_description = "${md5(file("${path.module}/api.yaml"))}"
+}
