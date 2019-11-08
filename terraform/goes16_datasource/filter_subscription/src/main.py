@@ -9,6 +9,9 @@ import boto3
 
 PROCESSING_FUNCTION = os.environ['processing_function']
 
+# Get Lambda Client
+client = boto3.client('lambda')
+
 def handler(event, context):
 
     sns_record = event['Records'][0]['Sns']

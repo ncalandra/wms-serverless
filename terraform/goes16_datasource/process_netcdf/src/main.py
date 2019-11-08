@@ -13,13 +13,15 @@ DEST_BUCKET = os.environ['dest_bucket']
 os.environ['PROJ_LIB'] = '/opt/share/proj'
 os.environ['GDAL_DATA'] = '/opt/share/gdal'
 
+# Get S3 Client
+client = boto3.client('s3')
+
 def handler(event, context):
 
     input_file = os.path.join('/tmp', 'file.nc')
     output_file = os.path.join('/tmp', 'file.tif')
 
     # Download file
-    client = boto3.client('s3')
     client.download_file(SOURCE_BUCKET, event['key'], input_file)
 
     # Convert to GeoTIFF
