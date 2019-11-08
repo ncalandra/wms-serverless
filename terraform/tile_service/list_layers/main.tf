@@ -47,7 +47,7 @@ resource "aws_lambda_permission" "allow_API_GW" {
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.list_layers.function_name}"
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${var.api_gateway_arn}"
+  source_arn    = "${var.api_gateway_arn}/*/GET/layers"
 }
 
 # Return Lambda ARN

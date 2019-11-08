@@ -41,6 +41,9 @@ data "aws_iam_policy_document" "lambda_invoke" {
     actions = [
       "lambda:InvokeFunction"
     ]
-    resources = ["${module.cog_renderer.lambda_arn}"]
+    resources = [
+      "${module.cog_renderer.lambda_arn}",
+      "${module.list_layers.lambda_arn}"
+    ]
   }
 }

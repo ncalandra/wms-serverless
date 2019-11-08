@@ -1,6 +1,7 @@
 '''List layers in an S3 Bucket.'''
 # System Imports
 import os
+import json
 
 # External Imports
 import boto3
@@ -19,4 +20,8 @@ def handler(event, context):
 
     # TODO: add check if there are more than 1000 layers
 
-    return [object['Key'] for object in response['Contents']]
+    return {
+        'statusCode': 200,
+        'headers': {'Content-Type': 'application/json'},
+        'body': json.dumps([object['Key'] for object in response['Contents']])
+    }

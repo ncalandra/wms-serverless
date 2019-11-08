@@ -20,6 +20,26 @@ x-amazon-apigateway-binary-media-types:
   - image/jpeg
   - image/webp
 paths:
+  /layers:
+    get:
+      summary: Get Available Layers
+      description: Returns a list of available layers
+      tags:
+        - Info
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              $ref: '#/components/schemas/layers'
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${list_layers}/invocations
+        httpMethod: POST
+        credentials: ${credentials}
+        responses:
+          default:
+            statusCode: 200
   /wms:
     get:
       summary: Web Map Service
@@ -143,6 +163,7 @@ paths:
         httpMethod: POST
         credentials: ${credentials}
         requestParameters:
+          # TODO: maybe not needed?
           integration.request.header.Accept: method.request.querystring.FORMAT
         responses:
           default:
@@ -152,3 +173,7 @@ components:
     binary:
       type: string
       format: binary
+    layers:
+      type: array
+      items:
+        type: string
