@@ -29,6 +29,13 @@ paths:
       responses:
         200:
           description: OK
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
           content:
             application/json:
               $ref: '#/components/schemas/layers'
@@ -40,6 +47,35 @@ paths:
         responses:
           default:
             statusCode: 200
+    options:
+      summary: Enable CORS
+      description: Enable CORS by returning the correct headers
+      responses:
+        200:
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        responses:
+          default:
+            statusCode: 200
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,access-control-allow-origin'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+        passthroughBehavior: when_no_match
+        requestTemplates:
+          application/json: |
+            {"statusCode" : 200}
   /wms:
     get:
       summary: Web Map Service
@@ -154,6 +190,13 @@ paths:
       responses:
         200:
           description: OK
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
           content:
             image/png:
               $ref: '#/components/schemas/binary'
@@ -168,6 +211,35 @@ paths:
         responses:
           default:
             statusCode: 200
+    options:
+      summary: Enable CORS
+      description: Enable CORS by returning the correct headers
+      responses:
+        200:
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        responses:
+          default:
+            statusCode: 200
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,access-control-allow-origin'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+        passthroughBehavior: when_no_match
+        requestTemplates:
+          application/json: |
+            {"statusCode" : 200}
 components:
   schemas:
     binary:

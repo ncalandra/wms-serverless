@@ -37,6 +37,11 @@ def handler(event, context):
     return {
         'isBase64Encoded': True,
         'statusCode': 200,
-        'headers': {'Content-Type': 'image/png'},
+        'headers': {
+            'Content-Type': 'image/png',
+            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,access-control-allow-origin',
+            'Access-Control-Allow-Methods': '*',
+            'Access-Control-Allow-Origin': '*'
+        },
         'body': encoded_image
     }
