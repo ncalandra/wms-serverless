@@ -27,10 +27,10 @@ def handler(event, context):
     bounding_box = event["queryStringParameters"]["BBOX"].split(",")
 
     # Convert to GeoTIFF
-    gdal.Translate(
-        os.path.join("/tmp", "file.png"),
-        f"/vsis3/{SOURCE_BUCKET}/{layername}",
-        outputType=gdal.GDT_Byte,
+    gdal_raster = gdal.Translate(
+        '',
+        f'/vsis3/{SOURCE_BUCKET}/{layername}',
+        format='MEM',
         width=width,
         height=height,
         projWin=[bounding_box[0], bounding_box[3], bounding_box[2], bounding_box[1]],
@@ -38,8 +38,18 @@ def handler(event, context):
         scaleParams=[],
     )
 
-    with open(os.path.join("/tmp", "file.png"), "rb") as image_file:
-        encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
+    # Add color
+    gdal.DEMProcessing(
+        os.path.join('/tmp', 'file.png'),
+        gdal_raster,
+        'color-relief',
+        addAlpha=True,
+        colorFilename='cloud_moisture.csv'
+    )
+    gdal_raster=None
+
+    with open(os.path.join('/tmp', 'file.png'), 'rb') as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
 
     return {
         "isBase64Encoded": True,
