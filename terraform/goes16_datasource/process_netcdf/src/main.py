@@ -1,55 +1,63 @@
-'''Convert NetCDF to a COG.'''
+"""Convert NetCDF to a COG."""
+
 # System Imports
+import logging
 import os
 
 # External Imports
 import boto3
-from osgeo import gdal, osr
-
-SOURCE_BUCKET = os.environ['source_bucket']
-DEST_BUCKET = os.environ['dest_bucket']
+from osgeo import gdal
 
 # Set environment variables for GDAL and Proj
-os.environ['PROJ_LIB'] = '/opt/share/proj'
-os.environ['GDAL_DATA'] = '/opt/share/gdal'
+os.environ["PROJ_LIB"] = "/opt/share/proj"
+os.environ["GDAL_DATA"] = "/opt/share/gdal"
+
+# Configure Logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 # Get S3 Client
-client = boto3.client('s3')
+client = boto3.client("s3")
+
+# Get environment variables
+SOURCE_BUCKET = os.environ["source_bucket"]
+DEST_BUCKET = os.environ["dest_bucket"]
+
 
 def handler(event, context):
-
-    input_file = os.path.join('/tmp', 'file.nc')
-    output_file = os.path.join('/tmp', 'file.tif')
+    """AWS Lambda handler."""
+    input_file = os.path.join("/tmp", "file.nc")
+    output_file = os.path.join("/tmp", "file.tif")
 
     # Download file
-    client.download_file(SOURCE_BUCKET, event['key'], input_file)
+    client.download_file(SOURCE_BUCKET, event["key"], input_file)
 
     # Convert to GeoTIFF
     dataset = gdal.Translate(
-        '',
-        f'NETCDF:{input_file}:CMI',
-        format='MEM',
+        "",
+        f"NETCDF:{input_file}:CMI",
+        format="MEM",
         bandList=[1],
         outputType=gdal.GDT_Float32,
-        unscale=True  # GDAL warp cannot handle scaled values
+        unscale=True,  # GDAL warp cannot handle scaled values
     )
 
     # Warp to EPSG:3857
     dataset = gdal.Warp(
-        '',
+        "",
         dataset,
-        format='MEM',
-        dstSRS='EPSG:3857',
+        format="MEM",
+        dstSRS="EPSG:3857",
         workingType=gdal.GDT_Float32,
-        outputType=gdal.GDT_Float32
+        outputType=gdal.GDT_Float32,
     )
 
     # Apply compression and tiling
     dataset = gdal.Translate(
         output_file,
         dataset,
-        format='GTiff',
-        creationOptions=['TILED=YES', 'COMPRESS=DEFLATE']
+        format="GTiff",
+        creationOptions=["TILED=YES", "COMPRESS=DEFLATE"],
     )
 
     # Add overviews

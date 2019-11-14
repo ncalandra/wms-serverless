@@ -9,7 +9,7 @@ variable "project" {}
 # S3 Bucket Name
 variable "s3_bucket_name" {}
 
-# aer-mpt-data S3 bucket
+# Main S3 bucket
 resource "aws_s3_bucket" "data" {
   bucket = "${var.s3_bucket_name}"
   acl = "private"

@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 88
+docstring-convention = google
+docstring-quotes = "
+inline-quotes = "
+enable-extensions = G, SC, M
+ignore = D212, D300,
+import-order-style = smarkets
