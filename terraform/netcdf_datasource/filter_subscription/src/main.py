@@ -15,7 +15,7 @@ logger.setLevel(logging.INFO)
 
 # Get environment variables
 PROCESSING_FUNCTION = os.environ["processing_function"]
-COMPILE_PATTERNS = json.loads(os.environ["compile_patterns"])
+DATA_DEFINITIONS = json.loads(os.environ["data_definitions"])
 
 # Get Lambda Client
 client = boto3.client("lambda")
@@ -30,15 +30,15 @@ def handler(event, context):
     file_name = goes16_event["Records"][0]["s3"]["object"]["key"]
     logger.info(file_name)
 
-    for pattern in COMPILE_PATTERNS:
-        file_pattern = re.compile(pattern)
+    for definition in DATA_DEFINITIONS:
+        file_pattern = re.compile(definition["filter_regex"])
         if file_pattern.fullmatch(file_name):
             logger.info(f"Processing: {file_name}")
             client = boto3.client("lambda")
             client.invoke(
                 FunctionName=PROCESSING_FUNCTION,
                 InvocationType="Event",
-                Payload=json.dumps({"key": file_name}),
+                Payload=json.dumps({"key": file_name, "definition": definition}),
             )
 
     return

@@ -8,9 +8,6 @@ import os
 import boto3
 from osgeo import gdal
 
-# Get environment variables
-data_definitions = os.environ["data_definitions"]
-
 # Set environment variables for GDAL and Proj
 os.environ["PROJ_LIB"] = "/opt/share/proj"
 os.environ["GDAL_DATA"] = "/opt/share/gdal"
@@ -38,9 +35,9 @@ def handler(event, context):
     # Convert to GeoTIFF
     dataset = gdal.Translate(
         "",
-        f"NETCDF:{input_file}:CMI",
+        f"NETCDF:{input_file}:{event['definition']['parameter_name']}",
         format="MEM",
-        bandList=[1],
+        bandList=[event["definition"]["band"]],
         outputType=gdal.GDT_Float32,
         unscale=True,  # GDAL warp cannot handle scaled values
     )

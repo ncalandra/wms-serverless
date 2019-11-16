@@ -38,7 +38,7 @@ module "filter_subscription" {
   project             = "${var.project}"
   sns_topic_arn       = "${var.sns_topic_arn}"
   processing_function = "${module.process_netcdf.lambda_arn}"
-  compile_patterns    = "${var.data_definitions[*].filter_regex}"
+  data_definitions    = "${var.data_definitions}"
 }
 
 module "process_netcdf" {
@@ -47,5 +47,4 @@ module "process_netcdf" {
   project             = "${var.project}"
   source_bucket       = "${var.source_bucket}"
   dest_bucket         = "${var.dest_bucket}"
-  data_definitions    = "${var.data_definitions}"
 }

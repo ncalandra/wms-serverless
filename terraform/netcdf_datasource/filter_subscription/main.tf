@@ -9,7 +9,13 @@ variable "project" {type = string}
 # Parameters
 variable "sns_topic_arn" {type = string}
 variable "processing_function" {type = string}
-variable "compile_patterns" {type = list(string)}
+variable "data_definitions" {
+  type    = list(object({
+    filter_regex   = string
+    parameter_name = string
+    band           = number
+  }))
+}
 
 # Archive Source Code
 data "archive_file" "filter_subscription" {
@@ -31,7 +37,7 @@ resource "aws_lambda_function" "filter_subscription" {
   environment {
     variables = {
       processing_function = "${var.processing_function}"
-      compile_patterns    = "${jsonencode(var.compile_patterns)}"
+      data_definitions    = "${jsonencode(var.data_definitions)}"
     }
   }
 
