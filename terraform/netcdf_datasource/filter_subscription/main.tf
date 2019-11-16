@@ -3,11 +3,13 @@
  */
 
 # Name and Project Tags
-variable "name" {}
-variable "project" {}
+variable "name" {type = string}
+variable "project" {type = string}
 
 # Parameters
-variable "processing_function" {}
+variable "sns_topic_arn" {type = string}
+variable "processing_function" {type = string}
+variable "compile_patterns" {type = list(string)}
 
 # Archive Source Code
 data "archive_file" "filter_subscription" {
@@ -20,7 +22,7 @@ resource "aws_lambda_function" "filter_subscription" {
   filename         = "${path.module}/src.zip"
   source_code_hash = "${data.archive_file.filter_subscription.output_base64sha256}"
   function_name    = "${var.name}"
-  description      = "Filter the goes16 sns topic"
+  description      = "Filter the sns topic"
   role             = "${aws_iam_role.lambda.arn}"
   handler          = "main.handler"
   runtime          = "python3.7"
@@ -29,6 +31,7 @@ resource "aws_lambda_function" "filter_subscription" {
   environment {
     variables = {
       processing_function = "${var.processing_function}"
+      compile_patterns    = "${jsonencode(var.compile_patterns)}"
     }
   }
 
@@ -44,7 +47,7 @@ resource "aws_lambda_permission" "allow_SNS" {
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.filter_subscription.function_name}"
   principal     = "sns.amazonaws.com"
-  source_arn    = "arn:aws:sns:us-east-1:123901341784:NewGOES16Object"
+  source_arn    = "${var.sns_topic_arn}"
 }
 
 # Return Lambda ARN

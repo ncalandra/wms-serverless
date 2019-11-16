@@ -3,12 +3,19 @@
  */
 
 # Name and Project Tags
-variable "name" {}
-variable "project" {}
+variable "name" {type = string}
+variable "project" {type = string}
 
 # Parameters
-variable "source_bucket" {}
-variable "dest_bucket" {}
+variable "source_bucket" {type = string}
+variable "dest_bucket" {type = string}
+variable "data_definitions" {
+  type    = list(object({
+    filter_regex   = string
+    parameter_name = string
+    band           = number
+  }))
+}
 
 # Archive Source Code
 data "archive_file" "process_netcdf" {
@@ -34,8 +41,9 @@ resource "aws_lambda_function" "process_netcdf" {
 
   environment {
     variables = {
-      source_bucket = "${var.source_bucket}"
-      dest_bucket   = "${var.dest_bucket}"
+      source_bucket    = "${var.source_bucket}"
+      dest_bucket      = "${var.dest_bucket}"
+      data_definitions = "${jsonencode(var.data_definitions)}"
     }
   }
 

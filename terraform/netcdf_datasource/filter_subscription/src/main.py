@@ -13,7 +13,9 @@ import boto3
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+# Get environment variables
 PROCESSING_FUNCTION = os.environ["processing_function"]
+COMPILE_PATTERNS = json.loads(os.environ["compile_patterns"])
 
 # Get Lambda Client
 client = boto3.client("lambda")
@@ -28,16 +30,15 @@ def handler(event, context):
     file_name = goes16_event["Records"][0]["s3"]["object"]["key"]
     logger.info(file_name)
 
-    file_pattern = re.compile(
-        r"ABI-L2-CMIPF\/[0-9]{4}\/[0-9]{3}/[0-9]{2}/OR_ABI-L2-CMIPF-M6C09.*.nc"
-    )
-    if file_pattern.fullmatch(file_name):
-        logger.info("Processing")
-        client = boto3.client("lambda")
-        client.invoke(
-            FunctionName=PROCESSING_FUNCTION,
-            InvocationType="Event",
-            Payload=json.dumps({"key": file_name}),
-        )
+    for pattern in COMPILE_PATTERNS:
+        file_pattern = re.compile(pattern)
+        if file_pattern.fullmatch(file_name):
+            logger.info(f"Processing: {file_name}")
+            client = boto3.client("lambda")
+            client.invoke(
+                FunctionName=PROCESSING_FUNCTION,
+                InvocationType="Event",
+                Payload=json.dumps({"key": file_name}),
+            )
 
     return

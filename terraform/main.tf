@@ -12,11 +12,17 @@ terraform {
 
 # Modules
 module "geos16" {
-  source        = "./goes16_datasource"
-  name          = "${var.name}"
-  project       = "${var.project}"
-  source_bucket = "noaa-goes16"
-  dest_bucket   = "${var.s3_bucket_name}"
+  source           = "./netcdf_datasource"
+  name             = "${var.name}_goes16"
+  project          = "${var.project}"
+  sns_topic_arn    = "arn:aws:sns:us-east-1:123901341784:NewGOES16Object"
+  source_bucket    = "noaa-goes16"
+  dest_bucket      = "${var.s3_bucket_name}"
+  data_definitions = [{
+    filter_regex   = "ABI-L2-CMIPF\\/[0-9]{4}\\/[0-9]{3}/[0-9]{2}/OR_ABI-L2-CMIPF-M6C09.*.nc"
+    parameter_name = "CMI"
+    band           = 1
+  }]
 }
 
 module "s3" {

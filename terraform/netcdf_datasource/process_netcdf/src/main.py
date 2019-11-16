@@ -8,6 +8,9 @@ import os
 import boto3
 from osgeo import gdal
 
+# Get environment variables
+data_definitions = os.environ["data_definitions"]
+
 # Set environment variables for GDAL and Proj
 os.environ["PROJ_LIB"] = "/opt/share/proj"
 os.environ["GDAL_DATA"] = "/opt/share/gdal"
