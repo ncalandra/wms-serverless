@@ -25,6 +25,7 @@ def handler(event, context):
     width = event["queryStringParameters"]["WIDTH"]
     height = event["queryStringParameters"]["HEIGHT"]
     bounding_box = event["queryStringParameters"]["BBOX"].split(",")
+    style = event["queryStringParameters"]["STYLES"]
 
     # Convert to GeoTIFF
     gdal_raster = gdal.Translate(
@@ -44,7 +45,7 @@ def handler(event, context):
         gdal_raster,
         "color-relief",
         addAlpha=True,
-        colorFilename="cloud_moisture.csv",
+        colorFilename=os.path.join("styles", style),
     )
     gdal_raster = None
 
