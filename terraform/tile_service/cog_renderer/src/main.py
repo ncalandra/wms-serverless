@@ -45,7 +45,7 @@ def handler(event, context):
         gdal_raster,
         "color-relief",
         addAlpha=True,
-        colorFilename=os.path.join("styles", style),
+        colorFilename=os.path.join("styles", f"{style}.csv"),
     )
     gdal_raster = None
 
