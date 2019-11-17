@@ -32,8 +32,8 @@ module "s3" {
   s3_bucket_name = "${var.s3_bucket_name}"
 }
 
-module "tile_service" {
-  source        = "./tile_service"
+module "wms_api" {
+  source        = "./wms_api"
   name          = "${var.name}"
   project       = "${var.project}"
   source_bucket = "${var.s3_bucket_name}"

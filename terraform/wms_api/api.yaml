@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
   title: ${name}
-  description: Tiles COGS
+  description: WMS API
   version: 0.0.0
 servers:
   - url: 'localhost'

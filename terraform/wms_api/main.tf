@@ -1,5 +1,5 @@
 /*
- *  The purpose of this module is to serve tiles off of S3
+ *  The purpose of this module is to implement a WMS API
  */
 
 # Name and Project Tags
