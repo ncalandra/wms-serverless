@@ -38,6 +38,25 @@ The WMS API module uses API Gateway and lambda functions to operate on files sto
 
 This is endpoint supports a partial implementation of the WMS "GetMap" request.
 
+Supported parameters:
+
+| Name        | Supported (yes/no)   | Notes                                                  |
+|-------------|:--------------------:|--------------------------------------------------------|
+| VERSION     | yes                  | Only 1.3.0                                             |
+| REQUEST     | yes                  | Only "GetMap"                                          |
+| LAYERS      | yes                  | Only one layer at a time                               |
+| STYLES      | yes                  | Name of a csv file in the cog renderer lambda function |
+| CRS         | no                   |                                                        |
+| BBOX        | yes                  |                                                        |
+| WIDTH       | yes                  |                                                        |
+| HEIGHT      | yes                  |                                                        |
+| FORMAT      | yes                  | Only PNG                                               |
+| TRANSPARENT | yes                  |                                                        |
+| BGCOLOR     | no                   |                                                        |
+| EXCEPTIONS  | no                   |                                                        |
+| TIME        | no                   |                                                        |
+| ELEVATION   | no                   |                                                        |
+
 #### layers
 
 This endpoint simply lists layers in the main S3 bucket.  It is a placeholder until WMS "GetCapabilities" is supported.
