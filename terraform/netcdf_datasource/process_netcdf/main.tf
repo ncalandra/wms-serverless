@@ -29,8 +29,8 @@ resource "aws_lambda_function" "process_netcdf" {
   role             = "${aws_iam_role.lambda.arn}"
   handler          = "main.handler"
   runtime          = "python3.7"
-  timeout          = 300
-  memory_size      = 448
+  timeout          = 600
+  memory_size      = 1024
 
   environment {
     variables = {

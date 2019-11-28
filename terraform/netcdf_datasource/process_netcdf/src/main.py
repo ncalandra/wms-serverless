@@ -29,6 +29,8 @@ def handler(event, context):
     input_file = os.path.join("/tmp", "file.nc")
     output_file = os.path.join("/tmp", "file.tif")
 
+    print(f"Processing File: {event['key']}")
+
     # Download file
     client.download_file(SOURCE_BUCKET, event["key"], input_file)
 
@@ -50,6 +52,7 @@ def handler(event, context):
         dstSRS="EPSG:3857",
         workingType=gdal.GDT_Float32,
         outputType=gdal.GDT_Float32,
+        resampleAlg="cubicspline",
     )
 
     # Apply compression and tiling
