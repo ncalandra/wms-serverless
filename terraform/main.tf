@@ -23,7 +23,7 @@ module "geos16" {
     parameter_name = "CMI"
     band           = 1
   }, {
-    filter_regex   = "ABI-L2-CMIPF\\/[0-9]{4}\\/[0-9]{3}/[0-9]{2}/OR_ABI-L2-CMIPF-M6C01.*.nc"
+    filter_regex   = "ABI-L2-CMIPC\\/[0-9]{4}\\/[0-9]{3}/[0-9]{2}/OR_ABI-L2-CMIPC-M6C09.*.nc"
     parameter_name = "CMI"
     band           = 1
   }]

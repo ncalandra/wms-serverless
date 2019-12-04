@@ -3,6 +3,7 @@
 # System Imports
 import logging
 import os
+import uuid
 
 # External Imports
 import boto3
@@ -27,7 +28,6 @@ DEST_BUCKET = os.environ["dest_bucket"]
 def handler(event, context):
     """AWS Lambda handler."""
     input_file = os.path.join("/tmp", "file.nc")
-    output_file = os.path.join("/tmp", "file.tif")
 
     print(f"Processing File: {event['key']}")
 
@@ -35,33 +35,41 @@ def handler(event, context):
     client.download_file(SOURCE_BUCKET, event["key"], input_file)
 
     # Convert to GeoTIFF
-    dataset = gdal.Translate(
-        "",
+    temp_file_1 = os.path.join("/tmp", f"{uuid.uuid1()}_1.tif")
+    gdal.Translate(
+        temp_file_1,
         f"NETCDF:{input_file}:{event['definition']['parameter_name']}",
-        format="MEM",
+        format="GTiff",
         bandList=[event["definition"]["band"]],
         outputType=gdal.GDT_Float32,
+        creationOptions=["COMPRESS=DEFLATE"],
         unscale=True,  # GDAL warp cannot handle scaled values
     )
+    os.remove(input_file)
 
     # Warp to EPSG:3857
-    dataset = gdal.Warp(
-        "",
-        dataset,
-        format="MEM",
+    temp_file_2 = os.path.join("/tmp", f"{uuid.uuid1()}_2.tif")
+    gdal.Warp(
+        temp_file_2,
+        temp_file_1,
+        format="GTiff",
         dstSRS="EPSG:3857",
         workingType=gdal.GDT_Float32,
         outputType=gdal.GDT_Float32,
+        creationOptions=["COMPRESS=DEFLATE"],
         resampleAlg="cubicspline",
     )
+    os.remove(temp_file_1)
 
     # Apply compression and tiling
+    output_file = os.path.join("/tmp", f"{uuid.uuid1()}_final.tif")
     dataset = gdal.Translate(
         output_file,
-        dataset,
+        temp_file_2,
         format="GTiff",
         creationOptions=["TILED=YES", "COMPRESS=DEFLATE"],
     )
+    os.remove(temp_file_2)
 
     # Add overviews
     dataset.BuildOverviews("NEAREST", [2, 4, 8, 16, 32, 64])
@@ -72,3 +80,4 @@ def handler(event, context):
     # Upload to S3
     key = f'{event["key"].split(".")[0]}.tif'
     client.upload_file(output_file, DEST_BUCKET, key)
+    os.remove(output_file)
