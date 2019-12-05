@@ -35,16 +35,16 @@ variable "data_definitions" {
 module "filter_subscription" {
   source              = "./filter_subscription"
   name                = "${var.name}_filter_subscription"
-  project             = "${var.project}"
-  sns_topic_arn       = "${var.sns_topic_arn}"
-  processing_function = "${module.process_netcdf.lambda_arn}"
-  data_definitions    = "${var.data_definitions}"
+  project             = var.project
+  sns_topic_arn       = var.sns_topic_arn
+  processing_function = module.process_netcdf.lambda_arn
+  data_definitions    = var.data_definitions
 }
 
 module "process_netcdf" {
   source              = "./process_netcdf"
   name                = "${var.name}_process_netcdf"
-  project             = "${var.project}"
-  source_bucket       = "${var.source_bucket}"
-  dest_bucket         = "${var.dest_bucket}"
+  project             = var.project
+  source_bucket       = var.source_bucket
+  dest_bucket         = var.dest_bucket
 }

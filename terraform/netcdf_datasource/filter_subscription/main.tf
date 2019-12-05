@@ -26,24 +26,24 @@ data "archive_file" "filter_subscription" {
 
 resource "aws_lambda_function" "filter_subscription" {
   filename         = "${path.module}/src.zip"
-  source_code_hash = "${data.archive_file.filter_subscription.output_base64sha256}"
-  function_name    = "${var.name}"
+  source_code_hash = data.archive_file.filter_subscription.output_base64sha256
+  function_name    = var.name
   description      = "Filter the sns topic"
-  role             = "${aws_iam_role.lambda.arn}"
+  role             = aws_iam_role.lambda.arn
   handler          = "main.handler"
   runtime          = "python3.7"
   timeout          = 120
 
   environment {
     variables = {
-      processing_function = "${var.processing_function}"
-      data_definitions    = "${jsonencode(var.data_definitions)}"
+      processing_function = var.processing_function
+      data_definitions    = jsonencode(var.data_definitions)
     }
   }
 
   tags = {
-    Name    = "${var.name}"
-    Project = "${var.project}"
+    Name    = var.name
+    Project = var.project
   }
 }
 
@@ -51,12 +51,12 @@ resource "aws_lambda_function" "filter_subscription" {
 resource "aws_lambda_permission" "allow_SNS" {
   statement_id  = "AllowExecutionFromSNS"
   action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.filter_subscription.function_name}"
+  function_name = aws_lambda_function.filter_subscription.function_name
   principal     = "sns.amazonaws.com"
-  source_arn    = "${var.sns_topic_arn}"
+  source_arn    = var.sns_topic_arn
 }
 
 # Return Lambda ARN
 output "lambda_arn" {
-  value = "${aws_lambda_function.filter_subscription.arn}"
+  value = aws_lambda_function.filter_subscription.arn
 }

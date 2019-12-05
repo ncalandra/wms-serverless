@@ -11,11 +11,11 @@ variable "s3_bucket_name" {}
 
 # Main S3 bucket
 resource "aws_s3_bucket" "data" {
-  bucket = "${var.s3_bucket_name}"
+  bucket = var.s3_bucket_name
   acl = "private"
   tags = {
-    Name = "${var.name}"
-    Project = "${var.project}"
+    Name = var.name
+    Project = var.project
   }
 
   # Apply default encryption for all objects
@@ -40,7 +40,7 @@ resource "aws_s3_bucket" "data" {
 
 # block all public access
 resource "aws_s3_bucket_public_access_block" "data" {
-  bucket = "${aws_s3_bucket.data.id}"
+  bucket = aws_s3_bucket.data.id
 
   block_public_acls       = true
   block_public_policy     = true

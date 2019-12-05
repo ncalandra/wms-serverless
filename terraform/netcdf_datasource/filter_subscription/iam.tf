@@ -6,11 +6,11 @@
 resource "aws_iam_role" "lambda" {
   name = "${var.name}_lambda"
   path = "/"
-  assume_role_policy = "${data.aws_iam_policy_document.lambda.json}"
+  assume_role_policy = data.aws_iam_policy_document.lambda.json
 
   tags = {
     Name    = "${var.name}_lambda"
-    Project = "${var.project}"
+    Project = var.project
   }
 }
 
@@ -29,8 +29,8 @@ data "aws_iam_policy_document" "lambda" {
 # In-line policy attachment
 resource "aws_iam_role_policy" "lambda" {
   name = "${var.name}_lambda"
-  role = "${aws_iam_role.lambda.id}"
-  policy = "${data.aws_iam_policy_document.lambda_invoke.json}"
+  role = aws_iam_role.lambda.id
+  policy = data.aws_iam_policy_document.lambda_invoke.json
 }
 
 # In-line policy definition
@@ -41,12 +41,12 @@ data "aws_iam_policy_document" "lambda_invoke" {
     actions = [
       "lambda:InvokeFunction"
     ]
-    resources = ["${var.processing_function}"]
+    resources = [var.processing_function]
   }
 }
 
 # AWS CloudWatch policy attachment
 resource "aws_iam_role_policy_attachment" "cloudwatch" {
-  role       = "${aws_iam_role.lambda.id}"
+  role       = aws_iam_role.lambda.id
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }

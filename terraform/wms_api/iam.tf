@@ -6,11 +6,11 @@
 resource "aws_iam_role" "api_gw" {
   name = "${var.name}_api_gw"
   path = "/"
-  assume_role_policy = "${data.aws_iam_policy_document.api_gw.json}"
+  assume_role_policy = data.aws_iam_policy_document.api_gw.json
 
   tags = {
     Name    = "${var.name}_api_gw"
-    Project = "${var.project}"
+    Project = var.project
   }
 }
 
@@ -29,8 +29,8 @@ data "aws_iam_policy_document" "api_gw" {
 # In-line policy attachment
 resource "aws_iam_role_policy" "api_gw" {
   name = "${var.name}_api_gw"
-  role = "${aws_iam_role.api_gw.id}"
-  policy = "${data.aws_iam_policy_document.lambda_invoke.json}"
+  role = aws_iam_role.api_gw.id
+  policy = data.aws_iam_policy_document.lambda_invoke.json
 }
 
 # In-line policy definition
@@ -42,8 +42,8 @@ data "aws_iam_policy_document" "lambda_invoke" {
       "lambda:InvokeFunction"
     ]
     resources = [
-      "${module.cog_renderer.lambda_arn}",
-      "${module.list_layers.lambda_arn}"
+      module.cog_renderer.lambda_arn,
+      module.list_layers.lambda_arn
     ]
   }
 }
