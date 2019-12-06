@@ -9,6 +9,7 @@ variable "project" {type = string}
 # Parameters
 variable "source_bucket" {type = string}
 variable "dest_bucket" {type = string}
+variable "stac_db" {type = string}
 
 # Archive Source Code
 data "archive_file" "process_netcdf" {

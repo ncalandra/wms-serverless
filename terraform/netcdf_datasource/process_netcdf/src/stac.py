@@ -5,10 +5,14 @@ import json
 import logging
 
 # External Imports
+import boto3
 
 # Configure Logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
+# Get S3 Client
+client = boto3.client("dynamodb")
 
 
 def generate(data, bucket, s3_client):
@@ -22,6 +26,7 @@ def generate(data, bucket, s3_client):
 
     """
     generate_item(data, bucket, s3_client)
+    generate_item_db(data)
 
 
 def generate_item(data, bucket, s3_client):
@@ -58,4 +63,43 @@ def generate_item(data, bucket, s3_client):
         Body=json.dumps(stac_item),
         Bucket=bucket,
         Key=f"{data['key'].split('.')[0]}.json",
+    )
+
+
+def generate_item_db(data):
+    """
+    Generate a STAC item and upload to dynamodb.
+
+    Args:
+        data: information about the new data that was written to S3
+
+    """
+    item_id = (
+        "/".join(data["key"].split("/")[0:4])
+        + data["key"].split("/")[-1].split("_")[4][1:-3]
+    )
+    client.put_item(
+        TableName="wms_serverless_data_catalog",
+        Item={
+            "catalog": {"S": "NOAA-GOES-16"},
+            "id": {"S": item_id},
+            "assets": {
+                "M": {
+                    f"B{data['band']}": {
+                        "M": {
+                            "type": {"S": "image/x.geotiff"},
+                            "title": {"S": "Some title?"},
+                            "href": {"S": data["key"]},
+                        }
+                    }
+                }
+            },
+            "links": {
+                "L": [
+                    {"M": {"rel": {"S": "self"}, "href": {"S": "self.json"}}},
+                    {"M": {"rel": {"S": "parent"}, "href": {"S": "parent.json"}}},
+                    {"M": {"rel": {"S": "root"}, "href": {"S": "root.json"}}},
+                ]
+            },
+        },
     )

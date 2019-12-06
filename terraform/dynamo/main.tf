@@ -11,10 +11,15 @@ resource "aws_dynamodb_table" "data_catalog" {
   name           = "${var.name}_data_catalog"
   billing_mode   = "PAY_PER_REQUEST"
   hash_key       = "catalog"
-  //range_key      = "GameTitle"
+  range_key      = "id"
 
   attribute {
     name = "catalog"
+    type = "S"
+  }
+
+  attribute {
+    name = "id"
     type = "S"
   }
 
@@ -22,4 +27,9 @@ resource "aws_dynamodb_table" "data_catalog" {
     Name        = "${var.name}_data_catalog"
     Environment = var.project
   }
+}
+
+# Return table arn
+output "table" {
+  value = aws_dynamodb_table.data_catalog.arn
 }

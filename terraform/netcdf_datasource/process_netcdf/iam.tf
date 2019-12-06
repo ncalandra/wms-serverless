@@ -26,11 +26,17 @@ data "aws_iam_policy_document" "lambda" {
   }
 }
 
-# In-line policy attachment
+# In-line policy attachments
 resource "aws_iam_role_policy" "s3" {
   name = "${var.name}_s3"
   role = aws_iam_role.lambda.id
   policy = data.aws_iam_policy_document.s3.json
+}
+
+resource "aws_iam_role_policy" "dynamodb" {
+  name = "${var.name}_dynamodb"
+  role = aws_iam_role.lambda.id
+  policy = data.aws_iam_policy_document.dynamodb.json
 }
 
 # In-line policy definition
@@ -60,6 +66,28 @@ data "aws_iam_policy_document" "s3" {
       "s3:PutObject"
     ]
     resources = ["arn:aws:s3:::${var.dest_bucket}/*"]
+  }
+}
+
+# In-line policy definition
+data "aws_iam_policy_document" "dynamodb" {
+  statement {
+    sid = "DynamoDBRead"
+    effect = "Allow"
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:Query"
+    ]
+    resources = [var.stac_db]
+  }
+
+  statement {
+    sid = "DynamoDBWrite"
+    effect = "Allow"
+    actions = [
+      "dynamodb:PutItem"
+    ]
+    resources = [var.stac_db]
   }
 }
 
