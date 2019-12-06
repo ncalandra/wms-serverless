@@ -31,5 +31,11 @@ def handler(event, context):
             "Access-Control-Allow-Methods": "*",
             "Access-Control-Allow-Origin": "*",
         },
-        "body": json.dumps([s3_object["Key"] for s3_object in response["Contents"]]),
+        "body": json.dumps(
+            [
+                s3_object["Key"]
+                for s3_object in response["Contents"]
+                if ".tif" in s3_object["Key"]
+            ]
+        ),
     }
