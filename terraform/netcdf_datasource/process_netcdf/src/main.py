@@ -7,7 +7,6 @@ import os
 # External Imports
 import boto3
 import netcdf_to_geotiff
-import stac
 
 # Set environment variables for GDAL and Proj
 os.environ["PROJ_LIB"] = "/opt/share/proj"
@@ -42,6 +41,3 @@ def handler(event, context):
 
     # Cleanup
     os.remove(data["local_file"])
-
-    # Write STAC data
-    stac.generate(data, DEST_BUCKET, client)

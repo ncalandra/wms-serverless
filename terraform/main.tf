@@ -18,7 +18,6 @@ module "geos16" {
   sns_topic_arn    = "arn:aws:sns:us-east-1:123901341784:NewGOES16Object"
   source_bucket    = "noaa-goes16"
   dest_bucket      = var.s3_bucket_name
-  stac_db          = module.dynamo.table
   data_definitions = [{
     filter_regex   = "ABI-L2-CMIPF\\/[0-9]{4}\\/[0-9]{3}/[0-9]{2}/OR_ABI-L2-CMIPF-M6C09.*.nc"
     parameter_name = "CMI"
@@ -35,12 +34,6 @@ module "s3" {
   name           = var.name
   project        = var.project
   s3_bucket_name = var.s3_bucket_name
-}
-
-module "dynamo" {
-  source         = "./dynamo"
-  name           = var.name
-  project        = var.project
 }
 
 module "wms_api" {

@@ -16,7 +16,6 @@ variable "source_bucket" {
   default = "noaa-goes16"
 }
 variable "dest_bucket" {type = string}
-variable "stac_db" {type = string}
 variable "data_definitions" {
   type    = list(object({
     filter_regex   = string
@@ -48,5 +47,4 @@ module "process_netcdf" {
   project             = var.project
   source_bucket       = var.source_bucket
   dest_bucket         = var.dest_bucket
-  stac_db             = var.stac_db
 }

@@ -9,7 +9,6 @@ variable "project" {type = string}
 # Parameters
 variable "source_bucket" {type = string}
 variable "dest_bucket" {type = string}
-variable "stac_db" {type = string}
 
 # Archive Source Code
 data "archive_file" "process_netcdf" {
@@ -35,8 +34,8 @@ resource "aws_lambda_function" "process_netcdf" {
 
   environment {
     variables = {
-      source_bucket    = var.source_bucket
-      dest_bucket      = var.dest_bucket
+      source_bucket = var.source_bucket
+      dest_bucket   = var.dest_bucket
     }
   }
 
