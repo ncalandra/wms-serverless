@@ -21,14 +21,14 @@ resource "aws_lambda_function" "cog_renderer" {
   filename         = "${path.module}/src.zip"
   source_code_hash = data.archive_file.cog_renderer.output_base64sha256
   layers           = [
-    "arn:aws:lambda:us-east-1:552188055668:layer:geolambda-python:3",
-    "arn:aws:lambda:us-east-1:552188055668:layer:geolambda:4"
+    "arn:aws:lambda:us-east-1:710449791192:layer:geolambda-python:3",
+    "arn:aws:lambda:us-east-1:710449791192:layer:geolambda:9"
   ]
   function_name    = var.name
   description      = "Convert a COG to an image"
   role             = aws_iam_role.lambda.arn
   handler          = "main.handler"
-  runtime          = "python3.7"
+  runtime          = "python3.8"
   timeout          = 300
   memory_size      = 128
 

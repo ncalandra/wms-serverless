@@ -2,7 +2,9 @@
 
 A Serverless implementation of WMS on AWS.
 
-This repository contains a [terraform](https://www.terraform.io/) project that implements a serverless version of [WMS](https://www.opengeospatial.org/standards/wms) on [AWS](https://aws.amazon.com/).
+This repository contains a [terraform](https://www.terraform.io/) project that implements a
+serverless version of [WMS](https://www.opengeospatial.org/standards/wms) on
+[AWS](https://aws.amazon.com/).
 
 A live demo can be found here: https://nathancalandra.cloud/goes16-serverless
 
@@ -12,11 +14,20 @@ This project consists of three modules.
 
 ### S3
 
-This modules contains the main S3 bucket used in this project.  It's purpose is store layers that will be served by the API.  The data source module can be used to automatically add files to this bucket.  To prevent storing large amounts of data, a life-cycle policy is applied to delete any object older than one day.
+This modules contains the main S3 bucket used in this project.  It's purpose is store layers that
+will be served by the API.  The data source module can be used to automatically add files to this
+bucket.  To prevent storing large amounts of data, a life-cycle policy is applied to delete any
+object older than one day.
 
 ### NetCDF Data Source
 
-This module contains lambda functions and an SNS subscription that are used to convert NetCDF files on the `noaa-goes16` public S3 bucket to [COGs](https://www.cogeo.org/).  It can be configured to pull as much data as desired from the source bucket.  It's default configuration pulls a single product.  To add more products edit the `data_definitions` variable in `terraform/main.tf`.  For example, the following configuration processes bands 2 and 9 from the Cloud Moisture Imagery (CMI) product.  See the [documentation](https://docs.opendata.aws/noaa-goes16/cics-readme.html) on the public goes16 S3 bucket for a description of the available data.
+This module contains lambda functions and an SNS subscription that are used to convert NetCDF files
+on the `noaa-goes16` public S3 bucket to [COGs](https://www.cogeo.org/).  It can be configured to
+pull as much data as desired from the source bucket.  It's default configuration pulls a single
+product.  To add more products edit the `data_definitions` variable in `terraform/main.tf`.  For
+example, the following configuration processes bands 2 and 9 from the Cloud Moisture Imagery (CMI)
+product.  See the [documentation](https://docs.opendata.aws/noaa-goes16/cics-readme.html) on the
+public goes16 S3 bucket for a description of the available data.
 
 ```hcl
 [{
@@ -32,7 +43,8 @@ This module contains lambda functions and an SNS subscription that are used to c
 
 ### WMS API
 
-The WMS API module uses API Gateway and lambda functions to operate on files stored in the S3 bucket.  Currently there are two endpoints:
+The WMS API module uses API Gateway and lambda functions to operate on files stored in the S3
+bucket.  Currently there are two endpoints:
 
 #### wms
 
@@ -59,7 +71,8 @@ Supported parameters:
 
 #### layers
 
-This endpoint simply lists layers in the main S3 bucket.  It is a placeholder until WMS "GetCapabilities" is supported.
+This endpoint simply lists layers in the main S3 bucket.  It is a placeholder until WMS
+"GetCapabilities" is supported.
 
 ## Installation
 

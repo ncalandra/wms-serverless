@@ -3,6 +3,10 @@
 import base64
 import logging
 import os
+import sys
+
+# update path to gdal libraries
+sys.path.append("/opt/python/osgeo")
 
 # External Imports
 from osgeo import gdal
